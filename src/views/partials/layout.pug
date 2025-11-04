@@ -19,6 +19,8 @@ html(lang='en')
             if currentUser
               li.nav-item
                 a.nav-link(href='/users')= t('common.users')
+              li.nav-item
+                a.nav-link(href='/statuses') Statuses
               li.nav-item.dropdown
                 a.nav-link.dropdown-toggle(href='#', role='button', data-bs-toggle='dropdown')
                   = currentUser.firstName + ' ' + currentUser.lastName
@@ -38,6 +40,8 @@ html(lang='en')
                 a.nav-link(href='/users/new')= t('common.signUp')
               li.nav-item
                 a.nav-link(href='/users')= t('common.users')
+              li.nav-item
+                a.nav-link(href='/statuses') Statuses
     
     .container.my-4
       if flash && (flash.error || flash.success)
