@@ -7,10 +7,24 @@ import pug from 'pug';
 import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
 import qs from 'qs';
+import rollbar from 'rollbar';
 import './lib/db.js';
 import { setUser } from './middleware/auth.js';
 
 dotenv.config();
+
+// Инициализация Rollbar
+const rollbarConfig = {
+  accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+  environment: process.env.NODE_ENV || 'development',
+};
+
+let rollbarInstance = null;
+if (rollbarConfig.accessToken && rollbarConfig.accessToken !== 'your-rollbar-access-token') {
+  rollbarInstance = new rollbar(rollbarConfig);
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -103,6 +117,64 @@ app.get('/', async (request, reply) => {
   });
 });
 
+// Обработчик ошибок с Rollbar
+app.setErrorHandler(async (error, request, reply) => {
+  // Логируем ошибку в Rollbar
+  if (rollbarInstance) {
+    rollbarInstance.error(error, request, {
+      method: request.method,
+      url: request.url,
+      headers: request.headers,
+      query: request.query,
+      body: request.body,
+      params: request.params,
+      userId: request.currentUser?.id,
+    });
+  }
+  
+  // Логируем ошибку в консоль
+  app.log.error(error);
+  
+  // Отправляем ответ пользователю
+  const statusCode = error.statusCode || 500;
+  const message = process.env.NODE_ENV === 'production' 
+    ? 'Internal Server Error' 
+    : error.message;
+  
+  // Если запрос ожидает HTML (например, для страниц), показываем страницу ошибки
+  if (request.headers.accept && request.headers.accept.includes('text/html')) {
+    request.flash('error', message);
+    return reply.status(statusCode).redirect('/');
+  }
+  
+  // Иначе возвращаем JSON
+  return reply.status(statusCode).send({
+    error: message,
+    statusCode,
+  });
+});
+
+// Обработчик необработанных ошибок
+process.on('unhandledRejection', (reason, promise) => {
+  if (rollbarInstance) {
+    rollbarInstance.error('Unhandled Rejection', { reason, promise });
+  }
+  app.log.error({ err: reason }, 'Unhandled Rejection');
+});
+
+process.on('uncaughtException', (error) => {
+  if (rollbarInstance) {
+    rollbarInstance.error('Uncaught Exception', error);
+  }
+  app.log.error({ err: error }, 'Uncaught Exception');
+  process.exit(1);
+});
+
+// Тестовый роут для проверки Rollbar (можно удалить после тестирования)
+app.get('/test-error', async () => {
+  throw new Error('Test error for Rollbar');
+});
+
 // Роуты
 app.register(import('./routes/users.js'), { prefix: '' });
 app.register(import('./routes/sessions.js'), { prefix: '' });
@@ -116,7 +188,14 @@ const start = async () => {
     const host = process.env.HOST || '0.0.0.0';
     await app.listen({ port, host });
     console.log(`Server is running on http://${host}:${port}`);
+    
+    if (rollbarInstance) {
+      rollbarInstance.info(`Server started on ${host}:${port}`);
+    }
   } catch (err) {
+    if (rollbarInstance) {
+      rollbarInstance.error(err, { type: 'startup' });
+    }
     app.log.error(err);
     process.exit(1);
   }
