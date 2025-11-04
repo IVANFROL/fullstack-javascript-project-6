@@ -1,0 +1,16 @@
+extends ../partials/layout
+
+block content
+  .row.justify-content-center
+    .col-md-6
+      .card
+        .card-header
+          h3.mb-0 Edit Label
+        .card-body
+          form(method='POST', action=`/labels/${label.id}`)
+            input(type='hidden', name='_method', value='PATCH')
+            .mb-3
+              label.form-label(for='data_name') Name
+              input#data_name.form-control(type='text', name='data[name]', value=label.name, required, minlength='1')
+            button.btn.btn-primary(type='submit') Update
+            a.btn.btn-secondary.ms-2(href='/labels') Cancel

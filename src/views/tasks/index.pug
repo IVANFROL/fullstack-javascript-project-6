@@ -15,6 +15,7 @@ block content
           th Status
           th Creator
           th Executor
+          th Labels
           if currentUser
             th Actions
       tbody
@@ -26,6 +27,12 @@ block content
             td= task.status ? task.status.name : 'N/A'
             td= task.creator ? task.creator.firstName + ' ' + task.creator.lastName : 'N/A'
             td= task.executor ? task.executor.firstName + ' ' + task.executor.lastName : 'N/A'
+            td
+              if task.labels && task.labels.length > 0
+                each label in task.labels
+                  span.badge.bg-secondary.me-1= label.name
+              else
+                span.text-muted -
             if currentUser
               td
                 a.btn.btn-sm.btn-outline-primary.me-2(href=`/tasks/${task.id}/edit`) Edit
@@ -35,4 +42,4 @@ block content
                     button.btn.btn-sm.btn-outline-danger(type='submit', onclick="return confirm('Are you sure?')") Delete
         if tasks.length === 0
           tr
-            td(colspan=currentUser ? 6 : 5).text-center.text-muted No tasks yet
+            td(colspan=currentUser ? 7 : 6).text-center.text-muted No tasks yet

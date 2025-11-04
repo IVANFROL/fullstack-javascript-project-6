@@ -18,6 +18,13 @@ block content
           .mb-3
             strong Executor: 
             = task.executor ? task.executor.firstName + ' ' + task.executor.lastName : 'N/A'
+          .mb-3
+            strong Labels: 
+            if task.labels && task.labels.length > 0
+              each label in task.labels
+                span.badge.bg-secondary.me-1= label.name
+            else
+              span.text-muted None
           if task.description
             .mb-3
               strong Description:

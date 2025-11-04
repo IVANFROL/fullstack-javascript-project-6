@@ -1,10 +1,11 @@
 import Task from '../models/Task.js';
 import TaskStatus from '../models/TaskStatus.js';
 import User from '../models/User.js';
+import Label from '../models/Label.js';
 
 export const index = async (request, reply) => {
   const tasks = await Task.query()
-    .withGraphFetched('[status, creator, executor]')
+    .withGraphFetched('[status, creator, executor, labels]')
     .orderBy('id');
   
   return reply.view('tasks/index.pug', {
@@ -22,11 +23,13 @@ export const newTask = async (request, reply) => {
   
   const statuses = await TaskStatus.query().orderBy('id');
   const users = await User.query().orderBy('id');
+  const labels = await Label.query().orderBy('id');
   
   return reply.view('tasks/new.pug', {
     task: {},
     statuses,
     users,
+    labels,
     t: request.t,
   });
 };
@@ -39,13 +42,21 @@ export const create = async (request, reply) => {
   
   try {
     const { data } = request.body;
-    await Task.query().insert({
+    const labelIds = Array.isArray(data.labelIds) ? data.labelIds.map(id => Number(id)) : 
+                     (data.labelIds ? [Number(data.labelIds)] : []);
+    
+    const task = await Task.query().insert({
       name: data.name,
       description: data.description || null,
       statusId: Number(data.statusId),
       creatorId: request.currentUser.id,
       executorId: data.executorId ? Number(data.executorId) : null,
     });
+    
+    if (labelIds.length > 0) {
+      await task.$relatedQuery('labels').relate(labelIds);
+    }
+    
     request.flash('success', 'Task has been created');
     return reply.redirect('/tasks');
   } catch (error) {
@@ -58,7 +69,7 @@ export const show = async (request, reply) => {
   const { id } = request.params;
   const task = await Task.query()
     .findById(id)
-    .withGraphFetched('[status, creator, executor]');
+    .withGraphFetched('[status, creator, executor, labels]');
   
   if (!task) {
     request.flash('error', 'Task not found');
@@ -81,7 +92,7 @@ export const edit = async (request, reply) => {
   const { id } = request.params;
   const task = await Task.query()
     .findById(id)
-    .withGraphFetched('[status, creator]');
+    .withGraphFetched('[status, creator, labels]');
   
   if (!task) {
     request.flash('error', 'Task not found');
@@ -90,11 +101,13 @@ export const edit = async (request, reply) => {
   
   const statuses = await TaskStatus.query().orderBy('id');
   const users = await User.query().orderBy('id');
+  const labels = await Label.query().orderBy('id');
   
   return reply.view('tasks/edit.pug', {
     task,
     statuses,
     users,
+    labels,
     t: request.t,
   });
 };
@@ -121,6 +134,15 @@ export const update = async (request, reply) => {
       statusId: Number(data.statusId),
       executorId: data.executorId ? Number(data.executorId) : null,
     });
+    
+    // Обновляем метки
+    const labelIds = Array.isArray(data.labelIds) ? data.labelIds.map(lid => Number(lid)) : 
+                     (data.labelIds ? [Number(data.labelIds)] : []);
+    await task.$relatedQuery('labels').unrelate();
+    if (labelIds.length > 0) {
+      await task.$relatedQuery('labels').relate(labelIds);
+    }
+    
     request.flash('success', 'Task has been updated');
     return reply.redirect('/tasks');
   } catch (error) {

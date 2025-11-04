@@ -1,0 +1,30 @@
+extends ../partials/layout
+
+block content
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1 Labels
+    if currentUser
+      a.btn.btn-primary(href='/labels/new') New Label
+  
+  .table-responsive
+    table.table.table-striped.table-hover
+      thead
+        tr
+          th ID
+          th Name
+          if currentUser
+            th Actions
+      tbody
+        each label in labels
+          tr
+            td= label.id
+            td= label.name
+            if currentUser
+              td
+                a.btn.btn-sm.btn-outline-primary.me-2(href=`/labels/${label.id}/edit`) Edit
+                form(method='POST', action=`/labels/${label.id}`, style='display: inline;')
+                  input(type='hidden', name='_method', value='DELETE')
+                  button.btn.btn-sm.btn-outline-danger(type='submit', onclick="return confirm('Are you sure?')") Delete
+        if labels.length === 0
+          tr
+            td(colspan=currentUser ? 3 : 2).text-center.text-muted No labels yet

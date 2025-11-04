@@ -26,5 +26,11 @@ block content
                 option(value='', selected=(!task.executorId)) No executor
                 each user in users
                   option(value=user.id, selected=(task.executorId === user.id))= user.firstName + ' ' + user.lastName
+            .mb-3
+              label.form-label(for='data_labelIds') Labels
+              select#data_labelIds.form-select(name='data[labelIds]', multiple)
+                each label in labels
+                  - const isSelected = task.labels && task.labels.some(l => l.id === label.id)
+                  option(value=label.id, selected=isSelected)= label.name
             button.btn.btn-primary(type='submit') Update
             a.btn.btn-secondary.ms-2(href='/tasks') Cancel
