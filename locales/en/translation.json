@@ -1,0 +1,8 @@
+{
+  "common": {
+    "title": "Welcome",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "users": "Users"
+  }
+}

@@ -3,12 +3,45 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import view from '@fastify/view';
-import ejs from 'ejs';
+import pug from 'pug';
+import i18next from 'i18next';
+import Backend from 'i18next-fs-backend';
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Инициализация i18next
+i18next.use(Backend);
+await i18next.init({
+  lng: 'en',
+  fallbackLng: 'en',
+  backend: {
+    loadPath: path.join(__dirname, '..', 'locales', '{{lng}}', '{{ns}}.json'),
+  },
+}).catch((err) => {
+  console.error('Failed to initialize i18next with file backend:', err);
+  // Fallback инициализация
+  return i18next.init({
+    lng: 'en',
+    fallbackLng: 'en',
+    resources: {
+      en: {
+        translation: {
+          common: {
+            title: 'Welcome',
+            signIn: 'Sign In',
+            signUp: 'Sign Up',
+            users: 'Users',
+          },
+        },
+      },
+    },
+  });
+});
+
+const t = i18next.t.bind(i18next);
 
 const app = Fastify({
   logger: true,
@@ -16,14 +49,18 @@ const app = Fastify({
 
 app.register(import('@fastify/static'), {
   root: path.join(__dirname, '..', 'public'),
-  prefix: '/',
+  prefix: '/assets/',
 });
 
 app.register(view, {
   engine: {
-    ejs: ejs,
+    pug: pug,
   },
   root: path.join(__dirname, 'views'),
+  viewExt: 'pug',
+  defaultContext: {
+    t: t,
+  },
 });
 
 app.register(import('@fastify/formbody'));
@@ -31,7 +68,10 @@ app.register(import('@fastify/cookie'));
 app.register(import('@fastify/flash'));
 
 app.get('/', async (request, reply) => {
-  return reply.view('index.ejs', { title: 'Welcome' });
+  return reply.view('index.pug', {
+    title: t('common.title'),
+    t: t,
+  });
 });
 
 const start = async () => {
