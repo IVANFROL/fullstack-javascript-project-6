@@ -103,6 +103,14 @@ export const destroy = async (request, reply) => {
       return reply.redirect('/statuses');
     }
     
+    const Task = (await import('../models/Task.js')).default;
+    const tasksWithStatus = await Task.query().where('statusId', id);
+    
+    if (tasksWithStatus.length > 0) {
+      request.flash('error', 'Cannot delete status with associated tasks');
+      return reply.redirect('/statuses');
+    }
+    
     await TaskStatus.query().deleteById(id);
     request.flash('success', 'Status has been deleted');
     return reply.redirect('/statuses');

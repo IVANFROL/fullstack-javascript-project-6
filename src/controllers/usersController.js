@@ -90,6 +90,15 @@ export const destroy = async (request, reply) => {
   }
   
   try {
+    const Task = (await import('../models/Task.js')).default;
+    const tasksAsCreator = await Task.query().where('creatorId', id);
+    const tasksAsExecutor = await Task.query().where('executorId', id);
+    
+    if (tasksAsCreator.length > 0 || tasksAsExecutor.length > 0) {
+      request.flash('error', 'Cannot delete user with associated tasks');
+      return reply.redirect('/users');
+    }
+    
     await User.query().deleteById(id);
     request.session.delete();
     request.flash('success', 'User successfully deleted');

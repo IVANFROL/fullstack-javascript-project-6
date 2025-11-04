@@ -1,0 +1,38 @@
+extends ../partials/layout
+
+block content
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1 Tasks
+    if currentUser
+      a.btn.btn-primary(href='/tasks/new') New Task
+  
+  .table-responsive
+    table.table.table-striped.table-hover
+      thead
+        tr
+          th ID
+          th Name
+          th Status
+          th Creator
+          th Executor
+          if currentUser
+            th Actions
+      tbody
+        each task in tasks
+          tr
+            td= task.id
+            td
+              a(href=`/tasks/${task.id}`)= task.name
+            td= task.status ? task.status.name : 'N/A'
+            td= task.creator ? task.creator.firstName + ' ' + task.creator.lastName : 'N/A'
+            td= task.executor ? task.executor.firstName + ' ' + task.executor.lastName : 'N/A'
+            if currentUser
+              td
+                a.btn.btn-sm.btn-outline-primary.me-2(href=`/tasks/${task.id}/edit`) Edit
+                if task.creatorId === currentUser.id
+                  form(method='POST', action=`/tasks/${task.id}`, style='display: inline;')
+                    input(type='hidden', name='_method', value='DELETE')
+                    button.btn.btn-sm.btn-outline-danger(type='submit', onclick="return confirm('Are you sure?')") Delete
+        if tasks.length === 0
+          tr
+            td(colspan=currentUser ? 6 : 5).text-center.text-muted No tasks yet

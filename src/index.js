@@ -97,6 +97,7 @@ app.get('/', async (request, reply) => {
 app.register(import('./routes/users.js'), { prefix: '' });
 app.register(import('./routes/sessions.js'), { prefix: '' });
 app.register(import('./routes/statuses.js'), { prefix: '' });
+app.register(import('./routes/tasks.js'), { prefix: '' });
 
 const start = async () => {
   try {
