@@ -63,7 +63,14 @@
     "update": "Обновить",
     "cancel": "Отмена",
     "noTasks": "Задач пока нет",
-    "backToTasks": "Назад к задачам"
+    "backToTasks": "Назад к задачам",
+    "filter": "Фильтр",
+    "allStatuses": "Все статусы",
+    "allExecutors": "Все исполнители",
+    "allLabels": "Все метки",
+    "onlyMyTasks": "Только мои задачи",
+    "applyFilter": "Применить",
+    "resetFilter": "Сбросить"
   },
   "labels": {
     "labels": "Метки",

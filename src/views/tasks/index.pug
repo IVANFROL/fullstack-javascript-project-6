@@ -6,6 +6,43 @@ block content
     if currentUser
       a.btn.btn-primary(href='/tasks/new')= t('tasks.newTask')
   
+  .card.mb-4
+    .card-header
+      h5.mb-0= t('tasks.filter')
+    .card-body
+      form(method='GET', action='/tasks')
+        .row.g-3
+          .col-md-3
+            label.form-label(for='status')= t('common.status')
+            select#status.form-select(name='status')
+              option(value='')= t('tasks.allStatuses')
+              each statusItem in statuses
+                option(value=statusItem.id, selected=(filters.status == statusItem.id))= statusItem.name
+          .col-md-3
+            label.form-label(for='executor')= t('common.executor')
+            select#executor.form-select(name='executor')
+              option(value='')= t('tasks.allExecutors')
+              each user in users
+                option(value=user.id, selected=(filters.executor == user.id))= user.firstName + ' ' + user.lastName
+          .col-md-3
+            label.form-label(for='label')= t('common.labels')
+            select#label.form-select(name='label')
+              option(value='')= t('tasks.allLabels')
+              each labelItem in labels
+                option(value=labelItem.id, selected=(filters.label == labelItem.id))= labelItem.name
+          .col-md-3
+            label.form-label.d-block &nbsp;
+            if currentUser
+              .form-check.mt-2
+                input#isCreatorUser.form-check-input(type='checkbox', name='isCreatorUser', value='1', checked=(filters.isCreatorUser === '1'))
+                label.form-check-label(for='isCreatorUser')= t('tasks.onlyMyTasks')
+            else
+              input(type='hidden', name='isCreatorUser', value='')
+        .row.mt-3
+          .col-12
+            button.btn.btn-primary.me-2(type='submit')= t('tasks.applyFilter')
+            a.btn.btn-secondary(href='/tasks')= t('tasks.resetFilter')
+  
   .table-responsive
     table.table.table-striped.table-hover
       thead

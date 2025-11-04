@@ -3,6 +3,7 @@ import { knex } from '../src/lib/db.js';
 import Task from '../src/models/Task.js';
 import User from '../src/models/User.js';
 import TaskStatus from '../src/models/TaskStatus.js';
+import Label from '../src/models/Label.js';
 
 describe('Tasks CRUD', () => {
   let testUser;
@@ -197,6 +198,150 @@ describe('Tasks CRUD', () => {
       
       const found = await Task.query().findById(task.id);
       expect(found).toBeUndefined();
+    });
+  });
+
+  describe('Filtering', () => {
+    let status2;
+    let label1;
+    let label2;
+
+    beforeAll(async () => {
+      status2 = await TaskStatus.query().insert({ name: 'In Progress' });
+      label1 = await Label.query().insert({ name: 'Urgent' });
+      label2 = await Label.query().insert({ name: 'Bug' });
+    });
+
+    it('should filter tasks by status', async () => {
+      const task1 = await Task.query().insert({
+        name: 'Task with status 1',
+        statusId: testStatus.id,
+        creatorId: testUser.id,
+      });
+      
+      const task2 = await Task.query().insert({
+        name: 'Task with status 2',
+        statusId: status2.id,
+        creatorId: testUser.id,
+      });
+
+      const filtered = await Task.query()
+        .where('statusId', testStatus.id)
+        .orderBy('id');
+      
+      const ids = filtered.map(t => t.id);
+      expect(ids).toContain(task1.id);
+      expect(ids).not.toContain(task2.id);
+    });
+
+    it('should filter tasks by executor', async () => {
+      const task1 = await Task.query().insert({
+        name: 'Task with executor 1',
+        statusId: testStatus.id,
+        creatorId: testUser.id,
+        executorId: testUser.id,
+      });
+      
+      const task2 = await Task.query().insert({
+        name: 'Task with executor 2',
+        statusId: testStatus.id,
+        creatorId: testUser.id,
+        executorId: testUser2.id,
+      });
+
+      const filtered = await Task.query()
+        .where('executorId', testUser.id)
+        .orderBy('id');
+      
+      const ids = filtered.map(t => t.id);
+      expect(ids).toContain(task1.id);
+      expect(ids).not.toContain(task2.id);
+    });
+
+    it('should filter tasks by label', async () => {
+      const task1 = await Task.query().insert({
+        name: 'Task with label 1',
+        statusId: testStatus.id,
+        creatorId: testUser.id,
+      });
+      
+      const task2 = await Task.query().insert({
+        name: 'Task with label 2',
+        statusId: testStatus.id,
+        creatorId: testUser.id,
+      });
+
+      await task1.$relatedQuery('labels').relate(label1.id);
+      await task2.$relatedQuery('labels').relate(label2.id);
+
+      const filtered = await Task.query()
+        .whereExists(function() {
+          this.select('*')
+            .from('task_labels')
+            .whereRaw('task_labels.taskId = tasks.id')
+            .where('task_labels.labelId', label1.id);
+        })
+        .orderBy('id');
+      
+      const ids = filtered.map(t => t.id);
+      expect(ids).toContain(task1.id);
+      expect(ids).not.toContain(task2.id);
+    });
+
+    it('should filter tasks by creator', async () => {
+      const task1 = await Task.query().insert({
+        name: 'Task by user 1',
+        statusId: testStatus.id,
+        creatorId: testUser.id,
+      });
+      
+      const task2 = await Task.query().insert({
+        name: 'Task by user 2',
+        statusId: testStatus.id,
+        creatorId: testUser2.id,
+      });
+
+      const filtered = await Task.query()
+        .where('creatorId', testUser.id)
+        .orderBy('id');
+      
+      const ids = filtered.map(t => t.id);
+      expect(ids).toContain(task1.id);
+      expect(ids).not.toContain(task2.id);
+    });
+
+    it('should combine multiple filters', async () => {
+      const task1 = await Task.query().insert({
+        name: 'Combined filter task',
+        statusId: testStatus.id,
+        creatorId: testUser.id,
+        executorId: testUser.id,
+      });
+      
+      const task2 = await Task.query().insert({
+        name: 'Another task',
+        statusId: testStatus.id,
+        creatorId: testUser.id,
+        executorId: testUser2.id,
+      });
+
+      await task1.$relatedQuery('labels').relate(label1.id);
+
+      const filtered = await Task.query()
+        .where('statusId', testStatus.id)
+        .where('creatorId', testUser.id)
+        .where('executorId', testUser.id)
+        .whereExists(function() {
+          this.select('*')
+            .from('task_labels')
+            .whereRaw('task_labels.taskId = tasks.id')
+            .where('task_labels.labelId', label1.id);
+        })
+        .orderBy('id');
+      
+      const ids = filtered.map(t => t.id);
+      expect(ids).toContain(task1.id);
+      expect(ids).not.toContain(task2.id);
     });
   });
 });

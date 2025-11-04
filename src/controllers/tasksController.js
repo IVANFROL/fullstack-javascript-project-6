@@ -4,12 +4,55 @@ import User from '../models/User.js';
 import Label from '../models/Label.js';
 
 export const index = async (request, reply) => {
-  const tasks = await Task.query()
-    .withGraphFetched('[status, creator, executor, labels]')
+  const { status, executor, label, isCreatorUser } = request.query;
+  
+  let query = Task.query()
+    .withGraphJoined('[status, creator, executor, labels]')
     .orderBy('id');
+  
+  // Фильтр по статусу
+  if (status) {
+    query = query.where('statusId', Number(status));
+  }
+  
+  // Фильтр по исполнителю
+  if (executor) {
+    query = query.where('executorId', Number(executor));
+  }
+  
+  // Фильтр по метке
+  if (label) {
+    query = query.whereExists(function() {
+      this.select('*')
+        .from('task_labels')
+        .whereRaw('task_labels.taskId = tasks.id')
+        .where('task_labels.labelId', Number(label));
+    });
+  }
+  
+  // Фильтр по автору (только задачи текущего пользователя)
+  if (isCreatorUser === '1' && request.currentUser) {
+    query = query.where('creatorId', request.currentUser.id);
+  }
+  
+  const tasks = await query;
+  
+  // Получаем данные для формы фильтрации
+  const statuses = await TaskStatus.query().orderBy('id');
+  const users = await User.query().orderBy('id');
+  const labels = await Label.query().orderBy('id');
   
   return reply.view('tasks/index.pug', {
     tasks,
+    statuses,
+    users,
+    labels,
+    filters: {
+      status: status || '',
+      executor: executor || '',
+      label: label || '',
+      isCreatorUser: isCreatorUser || '',
+    },
     t: request.t,
     currentUser: request.currentUser,
   });
