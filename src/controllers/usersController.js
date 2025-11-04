@@ -19,6 +19,12 @@ export const newUser = async (request, reply) => {
 export const create = async (request, reply) => {
   try {
     const { data } = request.body;
+    
+    if (!data) {
+      request.flash('error', 'Invalid form data');
+      return reply.redirect('/users/new');
+    }
+    
     const user = await User.query().insert({
       firstName: data.firstName,
       lastName: data.lastName,

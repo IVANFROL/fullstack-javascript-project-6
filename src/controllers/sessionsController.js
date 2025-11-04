@@ -9,6 +9,12 @@ export const newSession = async (request, reply) => {
 export const create = async (request, reply) => {
   try {
     const { data } = request.body;
+    
+    if (!data || !data.email || !data.password) {
+      request.flash('error', 'Email and password are required');
+      return reply.redirect('/session/new');
+    }
+    
     const user = await User.query().findOne({ email: data.email });
     
     if (!user || !(await user.verifyPassword(data.password))) {

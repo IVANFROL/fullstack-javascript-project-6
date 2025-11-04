@@ -6,6 +6,7 @@ import view from '@fastify/view';
 import pug from 'pug';
 import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
+import qs from 'qs';
 import './lib/db.js';
 import { setUser } from './middleware/auth.js';
 
@@ -70,7 +71,11 @@ app.register(view, {
   },
 });
 
-app.register(import('@fastify/formbody'));
+app.register(import('@fastify/formbody'), {
+  parser: (str) => {
+    return qs.parse(str);
+  },
+});
 app.register(import('@fastify/cookie'));
 app.register(import('@fastify/session'), {
   secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
