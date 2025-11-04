@@ -1,0 +1,23 @@
+extends ../partials/layout
+
+block content
+  .row.justify-content-center
+    .col-md-6
+      .card
+        .card-header
+          h3.mb-0 Sign Up
+        .card-body
+          form(method='POST', action='/users')
+            .mb-3
+              label.form-label(for='data_firstName') First Name
+              input#data_firstName.form-control(type='text', name='data[firstName]', required, minlength='1')
+            .mb-3
+              label.form-label(for='data_lastName') Last Name
+              input#data_lastName.form-control(type='text', name='data[lastName]', required, minlength='1')
+            .mb-3
+              label.form-label(for='data_email') Email
+              input#data_email.form-control(type='email', name='data[email]', required)
+            .mb-3
+              label.form-label(for='data_password') Password
+              input#data_password.form-control(type='password', name='data[password]', required, minlength='3')
+            button.btn.btn-primary(type='submit') Sign Up

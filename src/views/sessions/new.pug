@@ -1,0 +1,17 @@
+extends ../partials/layout
+
+block content
+  .row.justify-content-center
+    .col-md-6
+      .card
+        .card-header
+          h3.mb-0 Sign In
+        .card-body
+          form(method='POST', action='/session')
+            .mb-3
+              label.form-label(for='data_email') Email
+              input#data_email.form-control(type='email', name='data[email]', required)
+            .mb-3
+              label.form-label(for='data_password') Password
+              input#data_password.form-control(type='password', name='data[password]', required)
+            button.btn.btn-primary(type='submit') Sign In

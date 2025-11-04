@@ -1,0 +1,28 @@
+extends ../partials/layout
+
+block content
+  .row.justify-content-center
+    .col-md-6
+      .card
+        .card-header
+          h3.mb-0 Edit User
+        .card-body
+          form(method='POST', action=`/users/${user.id}`)
+            input(type='hidden', name='_method', value='PATCH')
+            .mb-3
+              label.form-label(for='data_firstName') First Name
+              input#data_firstName.form-control(type='text', name='data[firstName]', value=user.firstName, required, minlength='1')
+            .mb-3
+              label.form-label(for='data_lastName') Last Name
+              input#data_lastName.form-control(type='text', name='data[lastName]', value=user.lastName, required, minlength='1')
+            .mb-3
+              label.form-label(for='data_email') Email
+              input#data_email.form-control(type='email', name='data[email]', value=user.email, required)
+            .mb-3
+              label.form-label(for='data_password') New Password (leave blank to keep current)
+              input#data_password.form-control(type='password', name='data[password]', minlength='3')
+            .d-flex.justify-content-between
+              button.btn.btn-primary(type='submit') Update
+              form(method='POST', action=`/users/${user.id}`, style='display: inline;')
+                input(type='hidden', name='_method', value='DELETE')
+                button.btn.btn-danger(type='submit', onclick="return confirm('Are you sure you want to delete your account?')") Delete Account

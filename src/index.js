@@ -6,6 +6,8 @@ import view from '@fastify/view';
 import pug from 'pug';
 import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
+import './lib/db.js';
+import { setUser } from './middleware/auth.js';
 
 dotenv.config();
 
@@ -65,14 +67,35 @@ app.register(view, {
 
 app.register(import('@fastify/formbody'));
 app.register(import('@fastify/cookie'));
+app.register(import('@fastify/session'), {
+  secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+  },
+});
 app.register(import('@fastify/flash'));
+app.register(import('./plugins/methodOverride.js'));
 
+// Middleware для установки текущего пользователя
+app.addHook('preHandler', async (request, reply) => {
+  await setUser(request, reply);
+  request.t = t;
+});
+
+// Главная страница
 app.get('/', async (request, reply) => {
   return reply.view('index.pug', {
     title: t('common.title'),
     t: t,
+    currentUser: request.currentUser,
   });
 });
+
+// Роуты
+app.register(import('./routes/users.js'), { prefix: '' });
+app.register(import('./routes/sessions.js'), { prefix: '' });
 
 const start = async () => {
   try {
