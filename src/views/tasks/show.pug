@@ -7,30 +7,30 @@ block content
         .card-header.d-flex.justify-content-between.align-items-center
           h3.mb-0= task.name
           if currentUser
-            a.btn.btn-sm.btn-outline-primary(href=`/tasks/${task.id}/edit`) Edit
+            a.btn.btn-sm.btn-outline-primary(href=`/tasks/${task.id}/edit`)= t('common.edit')
         .card-body
           .mb-3
-            strong Status: 
-            = task.status ? task.status.name : 'N/A'
+            strong= t('common.status') + ': '
+            = task.status ? task.status.name : t('common.na')
           .mb-3
-            strong Creator: 
-            = task.creator ? task.creator.firstName + ' ' + task.creator.lastName : 'N/A'
+            strong= t('common.creator') + ': '
+            = task.creator ? task.creator.firstName + ' ' + task.creator.lastName : t('common.na')
           .mb-3
-            strong Executor: 
-            = task.executor ? task.executor.firstName + ' ' + task.executor.lastName : 'N/A'
+            strong= t('common.executor') + ': '
+            = task.executor ? task.executor.firstName + ' ' + task.executor.lastName : t('common.na')
           .mb-3
-            strong Labels: 
+            strong= t('common.labels') + ': '
             if task.labels && task.labels.length > 0
               each label in task.labels
                 span.badge.bg-secondary.me-1= label.name
             else
-              span.text-muted None
+              span.text-muted= t('common.none')
           if task.description
             .mb-3
-              strong Description:
+              strong= t('common.description') + ':'
               p= task.description
           if currentUser && task.creatorId === currentUser.id
             form(method='POST', action=`/tasks/${task.id}`, style='display: inline;')
               input(type='hidden', name='_method', value='DELETE')
-              button.btn.btn-danger(type='submit', onclick="return confirm('Are you sure?')") Delete
-          a.btn.btn-secondary.ms-2(href='/tasks') Back to Tasks
+              button.btn.btn-danger(type='submit', onclick=`return confirm('${t('common.confirmDelete')}')`)= t('common.delete')
+          a.btn.btn-secondary.ms-2(href='/tasks')= t('tasks.backToTasks')

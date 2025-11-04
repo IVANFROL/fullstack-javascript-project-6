@@ -2,18 +2,18 @@ extends ../partials/layout
 
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1 Statuses
+    h1= t('common.statuses')
     if currentUser
-      a.btn.btn-primary(href='/statuses/new') New Status
+      a.btn.btn-primary(href='/statuses/new')= t('statuses.newStatus')
   
   .table-responsive
     table.table.table-striped.table-hover
       thead
         tr
-          th ID
-          th Name
+          th= t('common.id')
+          th= t('common.name')
           if currentUser
-            th Actions
+            th= t('common.actions')
       tbody
         each status in statuses
           tr
@@ -21,10 +21,10 @@ block content
             td= status.name
             if currentUser
               td
-                a.btn.btn-sm.btn-outline-primary.me-2(href=`/statuses/${status.id}/edit`) Edit
+                a.btn.btn-sm.btn-outline-primary.me-2(href=`/statuses/${status.id}/edit`)= t('common.edit')
                 form(method='POST', action=`/statuses/${status.id}`, style='display: inline;')
                   input(type='hidden', name='_method', value='DELETE')
-                  button.btn.btn-sm.btn-outline-danger(type='submit', onclick="return confirm('Are you sure?')") Delete
+                  button.btn.btn-sm.btn-outline-danger(type='submit', onclick=`return confirm('${t('common.confirmDelete')}')`)= t('common.delete')
         if statuses.length === 0
           tr
-            td(colspan=currentUser ? 3 : 2).text-center.text-muted No statuses yet
+            td(colspan=currentUser ? 3 : 2).text-center.text-muted= t('statuses.noStatuses')

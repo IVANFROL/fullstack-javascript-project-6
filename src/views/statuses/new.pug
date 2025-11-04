@@ -5,11 +5,11 @@ block content
     .col-md-6
       .card
         .card-header
-          h3.mb-0 New Status
+          h3.mb-0= t('statuses.newStatus')
         .card-body
           form(method='POST', action='/statuses')
             .mb-3
-              label.form-label(for='data_name') Name
+              label.form-label(for='data_name')= t('common.name')
               input#data_name.form-control(type='text', name='data[name]', required, minlength='1')
-            button.btn.btn-primary(type='submit') Create
-            a.btn.btn-secondary.ms-2(href='/statuses') Cancel
+            button.btn.btn-primary(type='submit')= t('statuses.create')
+            a.btn.btn-secondary.ms-2(href='/statuses')= t('statuses.cancel')

@@ -17,30 +17,35 @@ const __dirname = path.dirname(__filename);
 // Инициализация i18next
 i18next.use(Backend);
 await i18next.init({
-  lng: 'en',
-  fallbackLng: 'en',
+  lng: 'ru',
+  fallbackLng: 'ru',
   backend: {
     loadPath: path.join(__dirname, '..', 'locales', '{{lng}}', '{{ns}}.json'),
   },
 }).catch((err) => {
   console.error('Failed to initialize i18next with file backend:', err);
   // Fallback инициализация
-  return i18next.init({
-    lng: 'en',
-    fallbackLng: 'en',
-    resources: {
-      en: {
-        translation: {
-          common: {
-            title: 'Welcome',
-            signIn: 'Sign In',
-            signUp: 'Sign Up',
-            users: 'Users',
+              return i18next.init({
+        lng: 'ru',
+        fallbackLng: 'ru',
+        resources: {
+          ru: {
+            translation: {
+              common: {
+                title: 'Добро пожаловать',
+                signIn: 'Войти',
+                signUp: 'Регистрация',
+                users: 'Пользователи',
+                statuses: 'Статусы',
+                tasks: 'Задачи',
+                labels: 'Метки',
+                settings: 'Настройки',
+                signOut: 'Выйти',
+              },
+            },
           },
         },
-      },
-    },
-  });
+      });
 });
 
 const t = i18next.t.bind(i18next);
@@ -102,7 +107,7 @@ app.register(import('./routes/labels.js'), { prefix: '' });
 
 const start = async () => {
   try {
-    const port = process.env.PORT || 5000;
+    const port = process.env.PORT || 5001;
     const host = process.env.HOST || '0.0.0.0';
     await app.listen({ port, host });
     console.log(`Server is running on http://${host}:${port}`);

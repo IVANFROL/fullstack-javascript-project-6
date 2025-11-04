@@ -2,17 +2,17 @@ extends ../partials/layout
 
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1 Users
+    h1= t('common.users')
     if currentUser
-      a.btn.btn-primary(href=`/users/${currentUser.id}/edit`) Settings
+      a.btn.btn-primary(href=`/users/${currentUser.id}/edit`)= t('common.settings')
   
   .table-responsive
     table.table.table-striped.table-hover
       thead
         tr
-          th First Name
-          th Last Name
-          th Email
+          th= t('users.firstName')
+          th= t('users.lastName')
+          th= t('users.email')
       tbody
         each user in users
           tr

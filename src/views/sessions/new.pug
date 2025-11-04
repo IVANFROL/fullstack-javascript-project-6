@@ -5,13 +5,13 @@ block content
     .col-md-6
       .card
         .card-header
-          h3.mb-0 Sign In
+          h3.mb-0= t('common.signIn')
         .card-body
           form(method='POST', action='/session')
             .mb-3
-              label.form-label(for='data_email') Email
+              label.form-label(for='data_email')= t('sessions.email')
               input#data_email.form-control(type='email', name='data[email]', required)
             .mb-3
-              label.form-label(for='data_password') Password
+              label.form-label(for='data_password')= t('sessions.password')
               input#data_password.form-control(type='password', name='data[password]', required)
-            button.btn.btn-primary(type='submit') Sign In
+            button.btn.btn-primary(type='submit')= t('common.signIn')

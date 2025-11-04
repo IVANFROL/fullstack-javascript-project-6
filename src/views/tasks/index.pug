@@ -2,31 +2,31 @@ extends ../partials/layout
 
 block content
   .d-flex.justify-content-between.align-items-center.mb-4
-    h1 Tasks
+    h1= t('tasks.tasks')
     if currentUser
-      a.btn.btn-primary(href='/tasks/new') New Task
+      a.btn.btn-primary(href='/tasks/new')= t('tasks.newTask')
   
   .table-responsive
     table.table.table-striped.table-hover
       thead
         tr
-          th ID
-          th Name
-          th Status
-          th Creator
-          th Executor
-          th Labels
+          th= t('common.id')
+          th= t('common.name')
+          th= t('common.status')
+          th= t('common.creator')
+          th= t('common.executor')
+          th= t('common.labels')
           if currentUser
-            th Actions
+            th= t('common.actions')
       tbody
         each task in tasks
           tr
             td= task.id
             td
               a(href=`/tasks/${task.id}`)= task.name
-            td= task.status ? task.status.name : 'N/A'
-            td= task.creator ? task.creator.firstName + ' ' + task.creator.lastName : 'N/A'
-            td= task.executor ? task.executor.firstName + ' ' + task.executor.lastName : 'N/A'
+            td= task.status ? task.status.name : t('common.na')
+            td= task.creator ? task.creator.firstName + ' ' + task.creator.lastName : t('common.na')
+            td= task.executor ? task.executor.firstName + ' ' + task.executor.lastName : t('common.na')
             td
               if task.labels && task.labels.length > 0
                 each label in task.labels
@@ -35,11 +35,11 @@ block content
                 span.text-muted -
             if currentUser
               td
-                a.btn.btn-sm.btn-outline-primary.me-2(href=`/tasks/${task.id}/edit`) Edit
+                a.btn.btn-sm.btn-outline-primary.me-2(href=`/tasks/${task.id}/edit`)= t('common.edit')
                 if task.creatorId === currentUser.id
                   form(method='POST', action=`/tasks/${task.id}`, style='display: inline;')
                     input(type='hidden', name='_method', value='DELETE')
-                    button.btn.btn-sm.btn-outline-danger(type='submit', onclick="return confirm('Are you sure?')") Delete
+                    button.btn.btn-sm.btn-outline-danger(type='submit', onclick=`return confirm('${t('common.confirmDelete')}')`)= t('common.delete')
         if tasks.length === 0
           tr
-            td(colspan=currentUser ? 7 : 6).text-center.text-muted No tasks yet
+            td(colspan=currentUser ? 7 : 6).text-center.text-muted= t('tasks.noTasks')

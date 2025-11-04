@@ -1,0 +1,83 @@
+{
+  "common": {
+    "title": "Добро пожаловать",
+    "signIn": "Войти",
+    "signUp": "Регистрация",
+    "users": "Пользователи",
+    "settings": "Настройки",
+    "signOut": "Выйти",
+    "statuses": "Статусы",
+    "tasks": "Задачи",
+    "labels": "Метки",
+    "hello": "Привет",
+    "appDescription": "Это Fastify приложение с Bootstrap и серверным рендерингом на Pug шаблонах с i18next для локализации.",
+    "welcomeMessage": "Привет, {firstName} {lastName}!",
+    "id": "ID",
+    "name": "Название",
+    "actions": "Действия",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "back": "Назад",
+    "no": "Нет",
+    "none": "Нет",
+    "confirmDelete": "Вы уверены?",
+    "status": "Статус",
+    "creator": "Создатель",
+    "executor": "Исполнитель",
+    "description": "Описание",
+    "selectStatus": "Выберите статус",
+    "noExecutor": "Без исполнителя",
+    "deleteAccount": "Удалить аккаунт",
+    "confirmDeleteAccount": "Вы уверены, что хотите удалить свой аккаунт?",
+    "na": "Н/Д"
+  },
+  "users": {
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "email": "Email",
+    "password": "Пароль",
+    "newPassword": "Новый пароль",
+    "editUser": "Редактировать пользователя",
+    "update": "Обновить",
+    "passwordPlaceholder": "Оставьте пустым, чтобы сохранить текущий"
+  },
+  "statuses": {
+    "name": "Название",
+    "newStatus": "Новый статус",
+    "editStatus": "Редактировать статус",
+    "create": "Создать",
+    "update": "Обновить",
+    "cancel": "Отмена",
+    "noStatuses": "Статусов пока нет"
+  },
+  "tasks": {
+    "tasks": "Задачи",
+    "newTask": "Новая задача",
+    "editTask": "Редактировать задачу",
+    "name": "Название",
+    "description": "Описание",
+    "status": "Статус",
+    "executor": "Исполнитель",
+    "labels": "Метки",
+    "create": "Создать",
+    "update": "Обновить",
+    "cancel": "Отмена",
+    "noTasks": "Задач пока нет",
+    "backToTasks": "Назад к задачам"
+  },
+  "labels": {
+    "labels": "Метки",
+    "newLabel": "Новая метка",
+    "editLabel": "Редактировать метку",
+    "name": "Название",
+    "create": "Создать",
+    "update": "Обновить",
+    "cancel": "Отмена",
+    "noLabels": "Меток пока нет"
+  },
+  "sessions": {
+    "signIn": "Войти",
+    "email": "Email",
+    "password": "Пароль"
+  }
+}

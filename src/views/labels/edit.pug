@@ -5,12 +5,12 @@ block content
     .col-md-6
       .card
         .card-header
-          h3.mb-0 Edit Label
+          h3.mb-0= t('labels.editLabel')
         .card-body
           form(method='POST', action=`/labels/${label.id}`)
             input(type='hidden', name='_method', value='PATCH')
             .mb-3
-              label.form-label(for='data_name') Name
+              label.form-label(for='data_name')= t('common.name')
               input#data_name.form-control(type='text', name='data[name]', value=label.name, required, minlength='1')
-            button.btn.btn-primary(type='submit') Update
-            a.btn.btn-secondary.ms-2(href='/labels') Cancel
+            button.btn.btn-primary(type='submit')= t('labels.update')
+            a.btn.btn-secondary.ms-2(href='/labels')= t('labels.cancel')

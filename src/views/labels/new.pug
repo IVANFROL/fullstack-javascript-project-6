@@ -5,11 +5,11 @@ block content
     .col-md-6
       .card
         .card-header
-          h3.mb-0 New Label
+          h3.mb-0= t('labels.newLabel')
         .card-body
           form(method='POST', action='/labels')
             .mb-3
-              label.form-label(for='data_name') Name
+              label.form-label(for='data_name')= t('common.name')
               input#data_name.form-control(type='text', name='data[name]', required, minlength='1')
-            button.btn.btn-primary(type='submit') Create
-            a.btn.btn-secondary.ms-2(href='/labels') Cancel
+            button.btn.btn-primary(type='submit')= t('labels.create')
+            a.btn.btn-secondary.ms-2(href='/labels')= t('labels.cancel')
