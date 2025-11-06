@@ -10,11 +10,13 @@ services:
     env: node
     plan: free
     region: oregon
-    buildCommand: make setup
+    buildCommand: NODE_ENV=production make setup
     startCommand: make start-prod
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: 20.18.0
       - key: SESSION_SECRET
         generateValue: true
       - key: DATABASE_URL

@@ -4,13 +4,17 @@
         start-backend start-backend-prod start-frontend start-frontend-prod \
         lint test test-coverage db-migrate db-reset
 
-setup: prepare install build migrate
+setup: prepare install build
 
 prepare:
 	cp -n .env.example .env || true
 
 install:
-	npm ci && npm install --only=dev
+	@if [ "$(NODE_ENV)" = "production" ]; then \
+		npm ci --production; \
+	else \
+		npm ci; \
+	fi
 
 build:
 	npm run build
@@ -26,7 +30,7 @@ prod-reset:
 	@npm run reset
 
 migrate:
-	npm run postdeploy
+	@npm run migrate
 
 start-prod: start-backend-prod
 
