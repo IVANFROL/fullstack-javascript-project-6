@@ -1,5 +1,6 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/IVANFROL/fullstack-javascript-project-6/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/IVANFROL/fullstack-javascript-project-6/actions)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=IVANFROL_fullstack-javascript-project-6&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=IVANFROL_fullstack-javascript-project-6)
 
 ## Fullstack JavaScript Project 6
 
@@ -83,4 +84,27 @@ Rollbar автоматически отслеживает:
 
 ### Деплой
 
-Проект развернут на Render: [ссылка будет добавлена после деплоя]
+Проект развернут на Render: https://fullstack-javascript-project-6-xfut.onrender.com/
+
+#### Настройка деплоя на Render
+
+1. **Создайте PostgreSQL базу данных**:
+   - В Render создайте новый PostgreSQL database
+   - Запомните Connection String (DATABASE_URL)
+
+2. **Создайте Web Service**:
+   - Подключите репозиторий GitHub
+   - Выберите branch: `main`
+   - Build Command: `npm install`
+   - Start Command: `npm run start:prod`
+   - Environment: `Node`
+
+3. **Настройте переменные окружения**:
+   - `NODE_ENV` = `production`
+   - `DATABASE_URL` = (создается автоматически при подключении PostgreSQL)
+   - `SESSION_SECRET` = (генерируйте случайную строку)
+   - `ROLLBAR_ACCESS_TOKEN` = (ваш токен из Rollbar)
+
+4. **Автоматический деплой**:
+   - При каждом push в `main` будет автоматический деплой
+   - Миграции выполняются автоматически перед запуском
