@@ -10,7 +10,6 @@ describe('requests', () => {
       logger: false, // как вариант logger: { transport: { target: 'pino-pretty' } },
     });
     await init(app);
-    await app.ready();
   });
 
   it('GET 200', async () => {
