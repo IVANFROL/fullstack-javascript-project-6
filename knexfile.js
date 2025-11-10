@@ -10,6 +10,10 @@ const migrations = {
   directory: path.join(__dirname, 'server', 'migrations'),
 };
 
+const productionMigrations = {
+  directory: path.join(__dirname, 'database', 'migrations'),
+};
+
 export const development = {
   client: 'sqlite3',
   connection: {
@@ -40,5 +44,5 @@ export const production = {
   },
   useNullAsDefault: true,
   // debug: true,
-  migrations,
+  migrations: productionMigrations,
 };
