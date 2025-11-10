@@ -49,19 +49,26 @@ module.exports = class User extends unique(BaseModel) {
   static modifiers = {
     getFullName(query) {
       const { raw } = User;
+      const isProduction = process.env.NODE_ENV === 'production';
+      const firstNameCol = isProduction ? 'first_name' : 'firstName';
+      const lastNameCol = isProduction ? 'last_name' : 'lastName';
       query.select(
         'id',
-        raw("CONCAT(??, ' ', ??)", ['firstName', 'lastName']).as('fullName')
+        raw("CONCAT(??, ' ', ??)", [firstNameCol, lastNameCol]).as('fullName')
       );
     },
 
     getPublicDate(query) {
       const { raw } = User;
+      const isProduction = process.env.NODE_ENV === 'production';
+      const firstNameCol = isProduction ? 'first_name' : 'firstName';
+      const lastNameCol = isProduction ? 'last_name' : 'lastName';
+      const createdAtCol = isProduction ? 'created_at' : 'createdAt';
       query.select(
         'id',
-        raw("CONCAT(??, ' ', ??)", ['firstName', 'lastName']).as('fullName'),
+        raw("CONCAT(??, ' ', ??)", [firstNameCol, lastNameCol]).as('fullName'),
         'email',
-        'createdAt'
+        createdAtCol
       );
     },
   };
