@@ -1,4 +1,5 @@
-import { setupTestApp, setupTestContext } from './helpers/index.js';
+import fastify from 'fastify';
+import init from '../server/plugin.js';
 import { prepareData } from './helpers/index.js';
 
 describe('test session', () => {
@@ -6,9 +7,14 @@ describe('test session', () => {
   let knex;
 
   beforeAll(async () => {
-    app = await setupTestApp();
-    const context = await setupTestContext(app);
-    knex = context.knex;
+    app = fastify({
+      exposeHeadRoutes: false,
+      logger: false,
+    });
+    await init(app);
+    await app.ready();
+    knex = app.objection.knex;
+    await knex.migrate.latest();
     await prepareData(app);
   });
 
