@@ -10,11 +10,7 @@ prepare:
 	cp -n .env.example .env || true
 
 install:
-	@if [ "$(NODE_ENV)" = "production" ]; then \
-		npm ci --production; \
-	else \
-		npm ci; \
-	fi
+	npm ci
 
 build:
 	npm run build
