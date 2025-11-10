@@ -120,7 +120,7 @@ const registerPlugins = async (app) => {
   });
 };
 
-export default async (app) => {
+export default async (app, options) => {
   if (process.env.NODE_ENV !== 'test' && process.env.ROLLBAR_ACCESS_TOKEN) {
     const rollbar = new Rollbar({
       accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
@@ -137,6 +137,4 @@ export default async (app) => {
   setUpStaticAssets(app);
   addRoutes(app);
   addHooks(app);
-
-  return app;
 };

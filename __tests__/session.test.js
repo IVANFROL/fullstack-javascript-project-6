@@ -12,6 +12,7 @@ describe('test session', () => {
       logger: false, // как вариант logger: { transport: { target: 'pino-pretty' } },
     });
     await init(app);
+    await app.ready();
     knex = app.objection.knex;
     await knex.migrate.latest();
     await prepareData(app);

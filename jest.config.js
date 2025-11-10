@@ -4,9 +4,15 @@ export default {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-  testMatch: ['**/tests/**/*.test.js'],
+  testMatch: ['**/__tests__/**/*.test.js'],
+  modulePathIgnorePatterns: [
+    '<rootDir>/__tests__/helpers/',
+  ],
+  setupFiles: [
+    'dotenv/config',
+  ],
   collectCoverageFrom: [
-    'src/**/*.js',
-    '!src/index.js',
+    'server/**/*.js',
+    '!server/plugin.js',
   ],
 };

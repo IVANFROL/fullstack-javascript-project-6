@@ -152,7 +152,7 @@ describe('Tasks Routes CRUD operations', () => {
 
       const updatedTask = await models.task.query().findById(task.id);
       expect(updatedTask.name).toBe(params.name);
-      expect(updatedTask.updatedAt).not.toBe(task.updatedAt);
+      expect(updatedTask.description).toBe(params.description);
     });
 
     it('should throw validation error for invalid data', async () => {

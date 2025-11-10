@@ -131,6 +131,7 @@ export const setupTestApp = async () => {
     logger: false,
   });
   await init(app);
+  await app.ready();
   return app;
 };
 

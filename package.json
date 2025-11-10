@@ -13,17 +13,9 @@
     "migrate": "knex migrate:latest",
     "migrate:rollback": "knex migrate:rollback",
     "migrate:make": "knex migrate:make",
-    "test": "jest --verbose --runInBand",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --verbose --runInBand",
     "test:coverage": "jest --coverage --coverageProvider=v8",
     "lint": "eslint ."
-  },
-  "jest": {
-    "modulePathIgnorePatterns": [
-      "<rootDir>/__tests__/helpers/"
-    ],
-    "setupFiles": [
-      "dotenv/config"
-    ]
   },
   "engines": {
     "node": ">=18.0.0 <23.0.0",
