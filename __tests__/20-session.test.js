@@ -2,14 +2,10 @@ import fastify from 'fastify';
 import init from '../server/plugin.js';
 import { prepareData } from './helpers/index.js';
 
-let app;
-let knex;
-
-const runServer = async (appInstance) => {
-  await appInstance.ready();
-};
-
 describe('test session', () => {
+  let app;
+  let knex;
+
   beforeAll(async () => {
     app = fastify({
       exposeHeadRoutes: false,
