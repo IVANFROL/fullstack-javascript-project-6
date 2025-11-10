@@ -27,24 +27,30 @@ module.exports = class User extends unique(BaseModel) {
   }
 
 
-  static relationMappings = {
-    createdTasks: {
-      relation: BaseModel.HasManyRelation,
-      modelClass: 'Task.cjs',
-      join: {
-        from: 'users.id',
-        to: 'tasks.creatorId',
+  static get relationMappings() {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const creatorIdCol = isProduction ? 'creator_id' : 'creatorId';
+    const executorIdCol = isProduction ? 'executor_id' : 'executorId';
+
+    return {
+      createdTasks: {
+        relation: BaseModel.HasManyRelation,
+        modelClass: 'Task.cjs',
+        join: {
+          from: 'users.id',
+          to: `tasks.${creatorIdCol}`,
+        },
       },
-    },
-    assignedTasks: {
-      relation: BaseModel.HasManyRelation,
-      modelClass: 'Task.cjs',
-      join: {
-        from: 'users.id',
-        to: 'tasks.executorId',
+      assignedTasks: {
+        relation: BaseModel.HasManyRelation,
+        modelClass: 'Task.cjs',
+        join: {
+          from: 'users.id',
+          to: `tasks.${executorIdCol}`,
+        },
       },
-    },
-  };
+    };
+  }
 
   static modifiers = {
     getFullName(query) {
