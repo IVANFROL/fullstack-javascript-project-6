@@ -40,65 +40,52 @@ module.exports = class Task extends BaseModel {
   static modifiers = {
     async filter(query, filterParams = {}) {
       const { status, executor, label, creator } = filterParams;
-      const isProduction = process.env.NODE_ENV === 'production';
-      const statusIdCol = isProduction ? 'status_id' : 'statusId';
-      const executorIdCol = isProduction ? 'executor_id' : 'executorId';
-      const creatorIdCol = isProduction ? 'creator_id' : 'creatorId';
 
       query
         .skipUndefined()
-        .where(statusIdCol, status || undefined)
-        .andWhere(executorIdCol, executor || undefined)
+        .where('statusId', status || undefined)
+        .andWhere('executorId', executor || undefined)
         .andWhere('labels.id', label || undefined)
-        .andWhere(creatorIdCol, creator || undefined);
+        .andWhere('creatorId', creator || undefined);
     },
   };
 
-  static get relationMappings() {
-    const isProduction = process.env.NODE_ENV === 'production';
-    const statusIdCol = isProduction ? 'status_id' : 'statusId';
-    const executorIdCol = isProduction ? 'executor_id' : 'executorId';
-    const creatorIdCol = isProduction ? 'creator_id' : 'creatorId';
-    const taskIdCol = isProduction ? 'task_id' : 'taskId';
-    const labelIdCol = isProduction ? 'label_id' : 'labelId';
-
-    return {
-      creator: {
-        relation: BaseModel.BelongsToOneRelation,
-        modelClass: 'User.cjs',
-        join: {
-          from: `tasks.${creatorIdCol}`,
-          to: 'users.id',
-        },
+  static relationMappings = {
+    creator: {
+      relation: BaseModel.BelongsToOneRelation,
+      modelClass: 'User.cjs',
+      join: {
+        from: 'tasks.creatorId',
+        to: 'users.id',
       },
-      executor: {
-        relation: BaseModel.BelongsToOneRelation,
-        modelClass: 'User.cjs',
-        join: {
-          from: `tasks.${executorIdCol}`,
-          to: 'users.id',
-        },
+    },
+    executor: {
+      relation: BaseModel.BelongsToOneRelation,
+      modelClass: 'User.cjs',
+      join: {
+        from: 'tasks.executorId',
+        to: 'users.id',
       },
-      status: {
-        relation: BaseModel.BelongsToOneRelation,
-        modelClass: 'Status.cjs',
-        join: {
-          from: `tasks.${statusIdCol}`,
-          to: 'statuses.id',
-        },
+    },
+    status: {
+      relation: BaseModel.BelongsToOneRelation,
+      modelClass: 'Status.cjs',
+      join: {
+        from: 'tasks.statusId',
+        to: 'statuses.id',
       },
-      labels: {
-        relation: BaseModel.ManyToManyRelation,
-        modelClass: 'Label.cjs',
-        join: {
-          from: 'tasks.id',
-          through: {
-            from: `task_labels.${taskIdCol}`,
-            to: `task_labels.${labelIdCol}`,
-          },
-          to: 'labels.id',
+    },
+    labels: {
+      relation: BaseModel.ManyToManyRelation,
+      modelClass: 'Label.cjs',
+      join: {
+        from: 'tasks.id',
+        through: {
+          from: 'tasks_labels.taskId',
+          to: 'tasks_labels.labelId',
         },
+        to: 'labels.id',
       },
-    };
-  }
+    },
+  };
 };

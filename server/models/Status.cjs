@@ -23,21 +23,16 @@ module.exports = class Status extends unique(BaseModel) {
   }
 
 
-  static get relationMappings() {
-    const isProduction = process.env.NODE_ENV === 'production';
-    const statusIdCol = isProduction ? 'status_id' : 'statusId';
-
-    return {
-      tasks: {
-        relation: BaseModel.HasManyRelation,
-        modelClass: 'Task.cjs',
-        join: {
-          from: 'statuses.id',
-          to: `tasks.${statusIdCol}`,
-        },
+  static relationMappings = {
+    tasks: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: 'Task.cjs',
+      join: {
+        from: 'statuses.id',
+        to: 'tasks.statusId',
       },
-    };
-  }
+    },
+  };
 
   static modifiers = {
     getShortData(query) {

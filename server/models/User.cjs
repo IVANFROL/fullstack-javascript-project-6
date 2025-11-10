@@ -27,54 +27,41 @@ module.exports = class User extends unique(BaseModel) {
   }
 
 
-  static get relationMappings() {
-    const isProduction = process.env.NODE_ENV === 'production';
-    const creatorIdCol = isProduction ? 'creator_id' : 'creatorId';
-    const executorIdCol = isProduction ? 'executor_id' : 'executorId';
-
-    return {
-      createdTasks: {
-        relation: BaseModel.HasManyRelation,
-        modelClass: 'Task.cjs',
-        join: {
-          from: 'users.id',
-          to: `tasks.${creatorIdCol}`,
-        },
+  static relationMappings = {
+    createdTasks: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: 'Task.cjs',
+      join: {
+        from: 'users.id',
+        to: 'tasks.creatorId',
       },
-      assignedTasks: {
-        relation: BaseModel.HasManyRelation,
-        modelClass: 'Task.cjs',
-        join: {
-          from: 'users.id',
-          to: `tasks.${executorIdCol}`,
-        },
+    },
+    assignedTasks: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: 'Task.cjs',
+      join: {
+        from: 'users.id',
+        to: 'tasks.executorId',
       },
-    };
-  }
+    },
+  };
 
   static modifiers = {
     getFullName(query) {
       const { raw } = User;
-      const isProduction = process.env.NODE_ENV === 'production';
-      const firstNameCol = isProduction ? 'first_name' : 'firstName';
-      const lastNameCol = isProduction ? 'last_name' : 'lastName';
       query.select(
         'id',
-        raw("CONCAT(??, ' ', ??)", [firstNameCol, lastNameCol]).as('fullName')
+        raw("CONCAT(??, ' ', ??)", ['firstName', 'lastName']).as('fullName')
       );
     },
 
     getPublicDate(query) {
       const { raw } = User;
-      const isProduction = process.env.NODE_ENV === 'production';
-      const firstNameCol = isProduction ? 'first_name' : 'firstName';
-      const lastNameCol = isProduction ? 'last_name' : 'lastName';
-      const createdAtCol = isProduction ? 'created_at' : 'createdAt';
       query.select(
         'id',
-        raw("CONCAT(??, ' ', ??)", [firstNameCol, lastNameCol]).as('fullName'),
+        raw("CONCAT(??, ' ', ??)", ['firstName', 'lastName']).as('fullName'),
         'email',
-        createdAtCol
+        'createdAt'
       );
     },
   };
