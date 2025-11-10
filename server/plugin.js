@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
+import fs from 'fs';
 import fastifyStatic from '@fastify/static';
 import fastifyView from '@fastify/view';
 import fastifyFormbody from '@fastify/formbody';
@@ -47,6 +48,9 @@ const setUpViews = (app) => {
 
 const setUpStaticAssets = (app) => {
   const pathPublic = path.join(__dirname, '..', 'dist');
+  if (!fs.existsSync(pathPublic)) {
+    fs.mkdirSync(pathPublic, { recursive: true });
+  }
   app.register(fastifyStatic, {
     root: pathPublic,
     prefix: '/assets/',
